@@ -20,6 +20,8 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private List<ChampionEntry> championEntries;
 
+    private bool _activeBattle;
+
     private void Start()
     {
         foreach (var champion in championEntries)
@@ -30,17 +32,25 @@ public class GameController : MonoBehaviour
         
         var selectedChampionsTeam1 = new[]
         {
-            allChampions[0]//, allChampions[1], allChampions[2]
+            allChampions[0], allChampions[1], allChampions[2]
         };
         var selectedChampionsTeam2 = new[]
         {
-            allChampions[1]//, allChampions[4], allChampions[5]
+            allChampions[3], allChampions[4], allChampions[5]
         };
+        _activeBattle = true;
         battleController.InitiateBattle(selectedChampionsTeam1, selectedChampionsTeam2);
+        battleController.onBattleEnd += () =>
+        {
+            _activeBattle = false;
+        };
     }
 
     void Update()
     {
-        battleController.ExecuteTurn();
+        if (_activeBattle)
+        {
+            battleController.ExecuteTurn();
+        }
     }
 }

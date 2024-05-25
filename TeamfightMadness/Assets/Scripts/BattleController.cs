@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,21 @@ public class BattleController : MonoBehaviour
         new Vector3(30, 0, 0),
         new Vector3(40, 25, 0),
     };
+
+    [SerializeField] private ScoreUI scoreUI;
+    [SerializeField] private BattleTimeUI battleTimeUI;
     
     [SerializeField] private GameObject championPreFab;
+    [SerializeField] private int respawnTime;
+    [SerializeField] private int battleTime;
     private List<ChampionObject> _champions;
     private List<ChampionObject> _championsTeam1;
     private List<ChampionObject> _championsTeam2;
+    private int _scoreTeam1;
+    private int _scoreTeam2;
+
+    public delegate void OnBattleEnd();
+    public event OnBattleEnd onBattleEnd;
 
     public void InitiateBattle(Champion[] championsTeam1, Champion[] championsTeam2)
     {
@@ -53,6 +64,31 @@ public class BattleController : MonoBehaviour
 
             championObject.AssignChampionModel(championsTeam2[i]);
         }
+
+        foreach (var champion in _champions)
+        {
+            champion.onDeath += HandleChampionDeath;
+        }
+
+        // Initialize Score
+        _scoreTeam1 = 0;
+        _scoreTeam2 = 0;
+        scoreUI.ChangeScore(_scoreTeam1, _scoreTeam2);
+
+        // Initialize Battle Time
+        battleTimeUI.ChangeTimer(battleTime);
+        StartCoroutine(StartBattleTimer());
+    }
+
+    private IEnumerator StartBattleTimer()
+    {
+        while (battleTime > 0)
+        {
+            yield return new WaitForSeconds(1);
+            battleTime--;
+            battleTimeUI.ChangeTimer(battleTime);
+        }
+        EndBattle();
     }
 
     public void ExecuteTurn()
@@ -100,6 +136,7 @@ public class BattleController : MonoBehaviour
         
         foreach (var champ in allEnemies)
         {
+            if (champ.IsDead) continue;
             var distance = DistanceBetweenChampions(champion, champ);
             if (distance < currentlyClosestDistance)
             {
@@ -108,6 +145,31 @@ public class BattleController : MonoBehaviour
             }
         }
         return closestEnemy;
+    }
+    
+    private void HandleChampionDeath(ChampionObject champion)
+    {
+        IncreaseScore(champion);
+        scoreUI.ChangeScore(_scoreTeam1, _scoreTeam2);
+        StartCoroutine(StartRespawnTime(champion));
+    }
+
+    private void IncreaseScore(ChampionObject champion)
+    {
+        if (_championsTeam1.Contains(champion)) _scoreTeam1++;
+        if (_championsTeam2.Contains(champion)) _scoreTeam2++;
+    }
+
+    private IEnumerator StartRespawnTime(ChampionObject champion)
+    {
+        yield return new WaitForSeconds(respawnTime);
+        champion.Respawn();
+    }
+    
+    private void EndBattle()
+    {
+        StopAllCoroutines();
+        onBattleEnd?.Invoke();
     }
 
     private static float DistanceBetweenChampions(ChampionObject champion1, ChampionObject champion2)
