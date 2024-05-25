@@ -184,7 +184,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 8.638885
+  orthographic size: 30
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -211,7 +211,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -225,6 +225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1658993419}
   - component: {fileID: 1658993418}
+  - component: {fileID: 1658993420}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -244,8 +245,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e660185913688a4299221872ed055c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  champions: []
-  championPreFab: {fileID: 0}
+  battleController: {fileID: 1658993420}
+  championEntries:
+  - health: 100
+    speed: 4
+    attackRange: 4
+    attackDamage: 13
+    attackSpeed: 5
+  - health: 60
+    speed: 6
+    attackRange: 8
+    attackDamage: 6
+    attackSpeed: 7
 --- !u!4 &1658993419
 Transform:
   m_ObjectHideFlags: 0
@@ -255,12 +266,25 @@ Transform:
   m_GameObject: {fileID: 1658993417}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.4779456, y: -0.20198172, z: 0.00026016776}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1658993420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1658993417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c9a8802814b2e44a9db1cd5bd6009eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  championPreFab: {fileID: 7853951147671143957, guid: 2567de05a4b93bd4b99c539a58d68835, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

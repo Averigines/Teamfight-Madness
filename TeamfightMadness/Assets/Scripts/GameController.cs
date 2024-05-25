@@ -9,42 +9,38 @@ public class GameController : MonoBehaviour
     [Serializable]
     private struct ChampionEntry
     {
-        public Vector2 startPosition;
         public int health;
-        public float speed;
-        public float attackRange;
-        public int damagePerAttack;
+        public int speed;
+        public int attackRange;
+        public int attackDamage;
+        public float attackSpeed;
     }
 
-    [SerializeField] private List<ChampionEntry> champions;
-    [SerializeField] private GameObject championPreFab;
+    [SerializeField] private BattleController battleController;
 
-    private Dictionary<Champion, ChampionObject> _championsMap;
+    [SerializeField] private List<ChampionEntry> championEntries;
 
-    void Start()
+    private void Start()
     {
-        _championsMap = new Dictionary<Champion, ChampionObject>();
-        
-        foreach (var champion in champions)
+        foreach (var champion in championEntries)
         {
-            Champions.CreateChampion(champion.startPosition, champion.health, champion.speed, champion.attackRange, champion.damagePerAttack);
+            Champions.CreateChampion(champion.health, champion.speed, champion.attackRange, champion.attackDamage, champion.attackSpeed);
         }
-
-        foreach (var champion in Champions.AllChampions)
-        {
-            var go = Instantiate(championPreFab, new Vector3(champion.Position.x, champion.Position.y, 0), Quaternion.identity);
-            var championObject = go.GetComponent<ChampionObject>();
-            _championsMap.Add(champion, championObject);
-
-            championObject.Champion = champion;
-
-            champion.onAttack += championObject.AttackChampion;
-        }
+        var allChampions = Champions.AllChampions;
         
+        var selectedChampionsTeam1 = new[]
+        {
+            allChampions[0]//, allChampions[1], allChampions[2]
+        };
+        var selectedChampionsTeam2 = new[]
+        {
+            allChampions[1]//, allChampions[4], allChampions[5]
+        };
+        battleController.InitiateBattle(selectedChampionsTeam1, selectedChampionsTeam2);
     }
-    
+
     void Update()
     {
-        Champions.DecideOnActions();
+        battleController.ExecuteTurn();
     }
 }
