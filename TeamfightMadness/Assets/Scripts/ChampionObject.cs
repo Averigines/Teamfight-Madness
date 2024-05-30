@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class ChampionObject : MonoBehaviour
 {
+    [SerializeField] private HealthBar healthBar;
+    
     private Champion _champion;
     
     public int Health { get; private set; }
@@ -23,6 +25,8 @@ public class ChampionObject : MonoBehaviour
     void Start()
     {
         Health = _champion.MaxHealth;
+        healthBar.Initialize(_champion.MaxHealth);
+        healthBar.UpdateHealthBar(Health);
         Speed = _champion.Speed;
         AttackRange = _champion.AttackRange;
         AttackDamage = _champion.AttackDamage;
@@ -44,7 +48,7 @@ public class ChampionObject : MonoBehaviour
     public void LoseHealth(int health)
     {
         Health -= health;
-        print(health);
+        healthBar.UpdateHealthBar(Health);
 
         if (Health <= 0)
         {
@@ -87,6 +91,7 @@ public class ChampionObject : MonoBehaviour
         IsDead = false;
         CanDoAction = true;
         Health = _champion.MaxHealth;
+        healthBar.UpdateHealthBar(Health);
         transform.position = StartPosition;
         gameObject.SetActive(true);
     }

@@ -9,7 +9,7 @@ public class BattleTimeUI : MonoBehaviour
 {
     private TextMeshProUGUI _battleTimer;
 
-    private void Start()
+    private void Awake()
     {
         _battleTimer = GetComponent<TextMeshProUGUI>();
     }
