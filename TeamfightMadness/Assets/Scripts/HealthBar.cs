@@ -1,15 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class HealthBar : MonoBehaviour
 {
+    private SpriteRenderer _healthBar;
     private int _maxHealth;
     private float _scalingPerHealthPoint;
 
+    [SerializeField] private Color fullHealthColor;
+    [SerializeField] private Color noHealthColor;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        _healthBar = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -22,11 +28,19 @@ public class HealthBar : MonoBehaviour
     {
         _maxHealth = maxHealth;
         _scalingPerHealthPoint = transform.localScale.x / _maxHealth;
+        
+        _healthBar.color = fullHealthColor;
     }
 
     public void UpdateHealthBar(int currHealth)
     {
-        Vector3 newScale = new Vector3(_scalingPerHealthPoint * currHealth, transform.localScale.y);
-        transform.localScale = newScale;
+        float newScale = _scalingPerHealthPoint * currHealth;
+        float healthNormalized = (float)currHealth / _maxHealth;
+        Color newColor = Color.Lerp(noHealthColor, fullHealthColor, healthNormalized);
+
+        Sequence animSequence = DOTween.Sequence();
+        Tweener scaleTween = transform.DOScaleX(newScale, 0.2f).SetEase(Ease.OutSine);
+        Tweener colorTween = _healthBar.DOColor(newColor, 0.2f).SetEase(Ease.OutSine);
+
     }
 }
