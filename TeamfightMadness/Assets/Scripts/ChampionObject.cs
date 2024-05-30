@@ -9,7 +9,9 @@ public class ChampionObject : MonoBehaviour
     [SerializeField] private HealthBar healthBar;
     
     private Champion _champion;
-    
+    private Animator _animator;
+    private static readonly int AttackAnim = Animator.StringToHash("Attack");
+
     public int Health { get; private set; }
     public int Speed { get; private set; }
     public int AttackRange { get; private set; }
@@ -21,7 +23,12 @@ public class ChampionObject : MonoBehaviour
     
     public delegate void OnDeath(ChampionObject champion);
     public event OnDeath onDeath;
-    
+
+    private void Awake()
+    {
+        _animator = GetComponent<Animator>();
+    }
+
     void Start()
     {
         Health = _champion.MaxHealth;
@@ -38,10 +45,8 @@ public class ChampionObject : MonoBehaviour
 
     public void Attack(ChampionObject championToAttack)
     {
-        //
-        // Implement Attack Animation and time until attack hits
-        //
-        
+        _animator.SetTrigger(AttackAnim);
+
         StartCoroutine(DisableAnyActionsForTime(10 / AttackSpeed));
     }
     
