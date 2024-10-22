@@ -13,10 +13,10 @@ public class ChampionFactory : MonoBehaviour
     {
         switch (entry.name)
         {
-            case GameController.ChampionName.FireMage:
-                return new FireMage(entry.health, entry.speed, entry.attackRange, entry.attackDamage, entry.attackSpeed);
-            case GameController.ChampionName.Warrior:
-                return new Warrior(entry.health, entry.speed, entry.attackRange, entry.attackDamage, entry.attackSpeed);
+            case ChampionName.FireMage:
+                return new FireMage(entry.health, entry.speed, entry.attackRange, entry.attackDamage, entry.attackSpeed, entry.attackCooldown);
+            case ChampionName.Warrior:
+                return new Warrior(entry.health, entry.speed, entry.attackRange, entry.attackDamage, entry.attackSpeed, entry.attackCooldown);
             default:
                 throw new ArgumentException($"Unknown champion type: {entry.name}");
         }

@@ -12,21 +12,23 @@ namespace GameModel
         
         // Number represents how many times a character can attack every second
         public float AttackSpeed { get; private set; }
+        public float AttackCooldown { get; private set; }
 
-        public Champion(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed)
+        public Champion(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed, float attackCooldown)
         {
             MaxHealth = maxHealth;
             Speed = speed;
             AttackRange = attackRange;
             AttackDamage = attackDamage;
             AttackSpeed = attackSpeed;
+            AttackCooldown = attackCooldown;
         }
     }
 
     public class FireMage : Champion
     {
-        public FireMage(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed) : base(
-            maxHealth, speed, attackRange, attackDamage, attackSpeed)
+        public FireMage(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed, float attackCooldown) : base(
+            maxHealth, speed, attackRange, attackDamage, attackSpeed, attackCooldown)
         {
             
         }
@@ -34,8 +36,8 @@ namespace GameModel
     
     public class Warrior : Champion
     {
-        public Warrior(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed) : base(
-            maxHealth, speed, attackRange, attackDamage, attackSpeed)
+        public Warrior(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed, float attackCooldown) : base(
+            maxHealth, speed, attackRange, attackDamage, attackSpeed, attackCooldown)
         {
             
         }

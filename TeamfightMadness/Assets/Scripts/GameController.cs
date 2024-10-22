@@ -7,12 +7,6 @@ using GameModel;
 
 public class GameController : MonoBehaviour
 {
-    public enum ChampionName
-    {
-        FireMage,
-        Warrior
-    };
-    
     [Serializable]
     public struct ChampionEntry
     {
@@ -22,6 +16,7 @@ public class GameController : MonoBehaviour
         public int attackRange;
         public int attackDamage;
         public float attackSpeed;
+        public float attackCooldown;
         public bool active;
     }
 

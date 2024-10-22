@@ -474,19 +474,53 @@ MonoBehaviour:
   battleController: {fileID: 1658993420}
   championEntries:
   - name: 0
-    health: 70
-    speed: 6
-    attackRange: 4
-    attackDamage: 13
-    attackSpeed: 0.1
+    health: 40
+    speed: 5
+    attackRange: 19
+    attackDamage: 10
+    attackSpeed: 1
+    attackCooldown: 4
     active: 1
   - name: 1
-    health: 40
+    health: 70
     speed: 8
-    attackRange: 8
-    attackDamage: 6
-    attackSpeed: 0.2
+    attackRange: 4
+    attackDamage: 7
+    attackSpeed: 1.1
+    attackCooldown: 3
     active: 1
+  - name: 0
+    health: 30
+    speed: 12
+    attackRange: 4
+    attackDamage: 13
+    attackSpeed: 0.9
+    attackCooldown: 5
+    active: 1
+  - name: 1
+    health: 90
+    speed: 3
+    attackRange: 7
+    attackDamage: 5
+    attackSpeed: 0.6
+    attackCooldown: 0.4
+    active: 0
+  - name: 0
+    health: 50
+    speed: 6
+    attackRange: 8
+    attackDamage: 7
+    attackSpeed: 1
+    attackCooldown: 0.5
+    active: 0
+  - name: 1
+    health: 115
+    speed: 3
+    attackRange: 4
+    attackDamage: 17
+    attackSpeed: 0.4
+    attackCooldown: 0.6
+    active: 0
 --- !u!4 &1658993419
 Transform:
   m_ObjectHideFlags: 0
