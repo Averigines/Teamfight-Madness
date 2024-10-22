@@ -22,9 +22,9 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 459188305, guid: 9d77b3b2376fab84282aba7940743b7d, type: 3}
-    - time: 0.5
+    - time: 0.33333334
       value: {fileID: -619760596, guid: 9d77b3b2376fab84282aba7940743b7d, type: 3}
-    - time: 0.98333335
+    - time: 0.6666667
       value: {fileID: 1941255894, guid: 9d77b3b2376fab84282aba7940743b7d, type: 3}
     attribute: m_Sprite
     path: 
@@ -75,4 +75,11 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 1
+    functionName: Respawn
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

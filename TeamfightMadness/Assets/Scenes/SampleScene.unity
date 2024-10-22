@@ -451,6 +451,7 @@ GameObject:
   - component: {fileID: 1658993419}
   - component: {fileID: 1658993418}
   - component: {fileID: 1658993420}
+  - component: {fileID: 1658993421}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -472,36 +473,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   battleController: {fileID: 1658993420}
   championEntries:
-  - health: 70
+  - name: 0
+    health: 70
     speed: 6
     attackRange: 4
     attackDamage: 13
-    attackSpeed: 5
-  - health: 40
+    attackSpeed: 0.1
+    active: 1
+  - name: 1
+    health: 40
     speed: 8
     attackRange: 8
     attackDamage: 6
-    attackSpeed: 7
-  - health: 30
-    speed: 12
-    attackRange: 14
-    attackDamage: 5
-    attackSpeed: 6
-  - health: 140
-    speed: 5
-    attackRange: 2
-    attackDamage: 3
-    attackSpeed: 4
-  - health: 110
-    speed: 16
-    attackRange: 1
-    attackDamage: 3
-    attackSpeed: 4
-  - health: 70
-    speed: 10
-    attackRange: 2
-    attackDamage: 8
-    attackSpeed: 6
+    attackSpeed: 0.2
+    active: 1
 --- !u!4 &1658993419
 Transform:
   m_ObjectHideFlags: 0
@@ -531,9 +516,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreUI: {fileID: 1516830558}
   battleTimeUI: {fileID: 1903503935}
-  championPreFab: {fileID: 7853951147671143957, guid: 2567de05a4b93bd4b99c539a58d68835, type: 3}
   respawnTime: 5
   battleTime: 30
+  factory: {fileID: 1658993421}
+--- !u!114 &1658993421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1658993417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 074694bf1430bed408b2e1e5d87dd478, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireMagePrefab: {fileID: 7853951147671143957, guid: 2567de05a4b93bd4b99c539a58d68835, type: 3}
+  warriorPrefab: {fileID: 7853951147671143957, guid: f6d5df3a6b1475842865d4a62c180644, type: 3}
 --- !u!1 &1903503931
 GameObject:
   m_ObjectHideFlags: 0
