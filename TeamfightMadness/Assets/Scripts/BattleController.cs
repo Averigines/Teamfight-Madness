@@ -25,7 +25,6 @@ public class BattleController : MonoBehaviour
     [SerializeField] private ScoreUI scoreUI;
     [SerializeField] private BattleTimeUI battleTimeUI;
     
-    [SerializeField] private GameObject championPreFab;
     [SerializeField] private int respawnTime;
     [SerializeField] private int battleTime;
     private List<ChampionObject> _champions;
@@ -33,6 +32,8 @@ public class BattleController : MonoBehaviour
     private List<ChampionObject> _championsTeam2;
     private int _scoreTeam1;
     private int _scoreTeam2;
+
+    [SerializeField] private ChampionFactory factory;
 
     public delegate void OnBattleEnd();
     public event OnBattleEnd onBattleEnd;
@@ -46,23 +47,17 @@ public class BattleController : MonoBehaviour
         //Initiate Team 1
         for (int i = 0; i < championsTeam1.Length; i++)
         {
-            var go = Instantiate(championPreFab, _startPositionsTeam1[i], Quaternion.identity);
-            var championObject = go.GetComponent<ChampionObject>();
-            _champions.Add(championObject);
-            _championsTeam1.Add(championObject);
-
-            championObject.AssignChampionModel(championsTeam1[i]);
+            var noob = factory.CreateChampionInBattle(championsTeam1[i], _startPositionsTeam1[i]);
+            _champions.Add(noob);
+            _championsTeam1.Add(noob);
         }
         
         //Initiate Team 2
         for (int i = 0; i < championsTeam2.Length; i++)
         {
-            var go = Instantiate(championPreFab, _startPositionsTeam2[i], Quaternion.identity);
-            var championObject = go.GetComponent<ChampionObject>();
-            _champions.Add(championObject);
-            _championsTeam2.Add(championObject);
-
-            championObject.AssignChampionModel(championsTeam2[i]);
+            var noob = factory.CreateChampionInBattle(championsTeam2[i], _startPositionsTeam2[i]);
+            _champions.Add(noob);
+            _championsTeam2.Add(noob);
         }
 
         foreach (var champion in _champions)
@@ -113,8 +108,10 @@ public class BattleController : MonoBehaviour
 
         if (champion.AttackRange >= distanceToChampion)
         {
-            champion.Attack(closestEnemy);
-            closestEnemy.LoseHealth(champion.AttackDamage);
+            StartCoroutine(champion.Attack(() =>
+            {
+                closestEnemy.LoseHealth(champion.AttackDamage);
+            }));
         }
         else
         {

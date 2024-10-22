@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace GameModel
 {
-    public class Champion
+    public abstract class Champion
     {
         public int MaxHealth { get; private set; }
         public int Speed { get; private set; }
         public int AttackRange { get; private set; }
         public int AttackDamage { get; private set; }
         
-        // Number represents how many times a character can attack every 10 seconds
+        // Number represents how many times a character can attack every second
         public float AttackSpeed { get; private set; }
 
         public Champion(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed)
@@ -23,19 +23,21 @@ namespace GameModel
         }
     }
 
-    public static class Champions
+    public class FireMage : Champion
     {
-        public static List<Champion> AllChampions { get; private set; }
-
-        static Champions()
+        public FireMage(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed) : base(
+            maxHealth, speed, attackRange, attackDamage, attackSpeed)
         {
-            AllChampions = new List<Champion>();
+            
         }
-
-        public static void CreateChampion(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed)
+    }
+    
+    public class Warrior : Champion
+    {
+        public Warrior(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed) : base(
+            maxHealth, speed, attackRange, attackDamage, attackSpeed)
         {
-            Champion champ = new Champion(maxHealth, speed, attackRange, attackDamage, attackSpeed);
-            AllChampions.Add(champ);
+            
         }
     }
 }

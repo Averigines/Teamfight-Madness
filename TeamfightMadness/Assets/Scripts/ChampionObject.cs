@@ -11,6 +11,7 @@ public class ChampionObject : MonoBehaviour
     private Champion _champion;
     private Animator _animator;
     private static readonly int AttackAnim = Animator.StringToHash("Attack");
+    private static readonly int AttackAnimDuration = Animator.StringToHash("AttackDuration");
 
     public int Health { get; private set; }
     public int Speed { get; private set; }
@@ -43,13 +44,6 @@ public class ChampionObject : MonoBehaviour
         IsDead = false;
     }
 
-    public void Attack(ChampionObject championToAttack)
-    {
-        _animator.SetTrigger(AttackAnim);
-
-        StartCoroutine(DisableAnyActionsForTime(10 / AttackSpeed));
-    }
-    
     public void LoseHealth(int health)
     {
         Health -= health;
@@ -71,18 +65,18 @@ public class ChampionObject : MonoBehaviour
         transform.position = newPosition;
     }
 
-    private IEnumerator DisableAnyActionsForTime(float time)
+    public IEnumerator Attack(Action onAttackComplete)
     {
         CanDoAction = false;
-        /*var timeRemaining = time;
-        while (timeRemaining > 0)
-        {
-            timeRemaining -= Time.deltaTime;
-            yield return null;
-        }*/
-        
-        yield return new WaitForSeconds(time);
 
+        float duration = 1 / AttackSpeed;
+        _animator.SetFloat(AttackAnimDuration, AttackSpeed);
+        _animator.SetBool(AttackAnim, true);
+
+        yield return new WaitForSeconds(duration);
+
+        onAttackComplete?.Invoke();
+        _animator.SetBool(AttackAnim, false);
         CanDoAction = true;
     }
 
@@ -100,4 +94,14 @@ public class ChampionObject : MonoBehaviour
         transform.position = StartPosition;
         gameObject.SetActive(true);
     }
+}
+
+public class FireMageObject : ChampionObject
+{
+    
+}
+
+public class WarriorObject : ChampionObject
+{
+    
 }
