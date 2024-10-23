@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using GameModel;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ChampionObject : MonoBehaviour
@@ -77,7 +79,7 @@ public class ChampionObject : MonoBehaviour
         }
     }
     
-    public void MoveInDirection(Vector3 direction)
+    protected void MoveInDirection(Vector3 direction)
     {
         CheckForFlip(direction);
         Vector3 newPosition = transform.position + direction * Speed * Time.deltaTime;
@@ -129,14 +131,40 @@ public class ChampionObject : MonoBehaviour
         transform.position = StartPosition;
         gameObject.SetActive(true);
     }
-}
 
-public class FireMageObject : ChampionObject
-{
+    public virtual void HandleAttackCooldown(List<KeyValuePair<ChampionObject,float>> enemiesWithDistance)
+    {
+        
+    }
     
-}
+    protected void MoveTowardsTarget(ChampionObject target)
+    {
+        var targetPos = target.transform.position;
+        var directionToMove = (targetPos - transform.position).normalized;
+        MoveInDirection(directionToMove);
+    }
+    
+    protected void MoveAwayFromTarget(ChampionObject target)
+    {
+        var targetPos = target.transform.position;
+        var directionToMove = (transform.position - targetPos).normalized;
+        MoveInDirection(directionToMove);
+    }
 
-public class WarriorObject : ChampionObject
-{
-    
+    public void HandleReadyState(KeyValuePair<ChampionObject, float> closestEnemyWithDistance)
+    {
+        if (AttackRange >= closestEnemyWithDistance.Value)
+        {
+            var enemyPos = closestEnemyWithDistance.Key.transform.position;
+            var directionToEnemy = (enemyPos - transform.position).normalized;
+            StartCoroutine(AttackCoroutine(directionToEnemy,() =>
+            {
+                closestEnemyWithDistance.Key.LoseHealth(AttackDamage);
+            }));
+        }
+        else
+        {
+            MoveTowardsTarget(closestEnemyWithDistance.Key);
+        }
+    }
 }

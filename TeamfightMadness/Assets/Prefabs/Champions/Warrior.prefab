@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4111347344172757883}
   - component: {fileID: 8645364598807061704}
-  - component: {fileID: 4564980192251595137}
   - component: {fileID: 7056192541205962493}
+  - component: {fileID: 6438463782608013305}
   m_Layer: 0
   m_Name: Warrior
   m_TagString: Untagged
@@ -87,19 +87,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4564980192251595137
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7853951147671143957}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c26fbc1b3beeb34499a215aa031eda34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthBar: {fileID: 7947704974227730032}
 --- !u!95 &7056192541205962493
 Animator:
   serializedVersion: 5
@@ -121,6 +108,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6438463782608013305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7853951147671143957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10c7707e7267c59469498080da257a63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBar: {fileID: 7947704974227730032}
 --- !u!1001 &1183838741846201687
 PrefabInstance:
   m_ObjectHideFlags: 0

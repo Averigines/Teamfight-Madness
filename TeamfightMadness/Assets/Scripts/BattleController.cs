@@ -114,76 +114,34 @@ public class BattleController : MonoBehaviour
     {
         ChampionObject closestEnemy = GetClosestEnemyFromChampion(champion);
         float distanceToChampion = DistanceBetweenChampions(champion, closestEnemy);
+        KeyValuePair<ChampionObject, float> closestEnemyWithDistance = new KeyValuePair<ChampionObject, float>(closestEnemy, distanceToChampion);
 
-        if (champion.AttackRange >= distanceToChampion)
-        {
-            var enemyPos = closestEnemy.transform.position;
-            var directionToEnemy = (enemyPos - champion.transform.position).normalized;
-            StartCoroutine(champion.AttackCoroutine(directionToEnemy,() =>
-            {
-                closestEnemy.LoseHealth(champion.AttackDamage);
-            }));
-        }
-        else
-        {
-            MoveTowardsTarget(champion, closestEnemy);
-        }
+        champion.HandleReadyState(closestEnemyWithDistance);
     }
 
     private void HandleAttackCooldownState(ChampionObject champion)
     {
-        ChampionObject closestEnemy = GetClosestEnemyFromChampion(champion);
-        float distanceToClosestEnemy = DistanceBetweenChampions(champion, closestEnemy);
-        if (champion.AttackRange <= distanceToClosestEnemy)
-        {
-            MoveTowardsTarget(champion, closestEnemy);
-            return;
-        }
-        
         List<ChampionObject> enemies = new List<ChampionObject>();
         if (_championsTeam1.Contains(champion)) enemies.AddRange(_championsTeam2);
         else enemies.AddRange(_championsTeam1);
 
-        enemies = SortByDistanceFromChampion(champion, enemies);
-        foreach (var enemy in enemies)
-        {
-            float distanceToChampion = DistanceBetweenChampions(champion, enemy);
-            if (enemy.AttackRange >= distanceToChampion)
-            {
-                MoveAwayFromTarget(champion, enemy);
-                return;
-            }
-        }
-
+        var enemiesWithDistance = SortByDistanceFromChampion(champion, enemies);
         
+        champion.HandleAttackCooldown(enemiesWithDistance);
     }
 
-    private List<ChampionObject> SortByDistanceFromChampion(ChampionObject champion, List<ChampionObject> targets)
+    private List<KeyValuePair<ChampionObject,float>> SortByDistanceFromChampion(ChampionObject champion, List<ChampionObject> targets)
     {
-        List<KeyValuePair<ChampionObject, float>> distanceToTargets = new List<KeyValuePair<ChampionObject, float>>();
+        List<KeyValuePair<ChampionObject, float>> targetsWithDistance = new List<KeyValuePair<ChampionObject, float>>();
 
         foreach (var target in targets)
         {
             float distance = DistanceBetweenChampions(champion, target);
-            distanceToTargets.Add(new KeyValuePair<ChampionObject, float>(target, distance));
+            targetsWithDistance.Add(new KeyValuePair<ChampionObject, float>(target, distance));
         }
 
-        var sortedList = distanceToTargets.OrderBy(pair => pair.Value).ToList();
-        return sortedList.Select(pair => pair.Key).ToList();
-    }
-
-    private void MoveTowardsTarget(ChampionObject mover, ChampionObject target)
-    {
-        var targetPos = target.transform.position;
-        var directionToMove = (targetPos - mover.transform.position).normalized;
-        mover.MoveInDirection(directionToMove);
-    }
-    
-    private void MoveAwayFromTarget(ChampionObject mover, ChampionObject target)
-    {
-        var targetPos = target.transform.position;
-        var directionToMove = (mover.transform.position - targetPos).normalized;
-        mover.MoveInDirection(directionToMove);
+        var sortedList = targetsWithDistance.OrderBy(pair => pair.Value).ToList();
+        return sortedList;
     }
 
     private ChampionObject GetClosestEnemyFromChampion(ChampionObject champion)
