@@ -91,6 +91,18 @@ public class ChampionObject : MonoBehaviour
         bool shouldFlip = direction.x > 0;
         if (_renderer.flipX != shouldFlip) _renderer.flipX = shouldFlip;
     }
+    
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Arena"))
+        {
+            print("CollidedWithArena");
+        }
+        if (collision.CompareTag("Player"))
+        {
+            print("CollidedWithChamp");
+        }
+    }
 
     public IEnumerator AttackCoroutine(Vector3 direction, Action onAttackComplete)
     {
