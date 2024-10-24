@@ -13,6 +13,7 @@ public class ChampionObject : MonoBehaviour
     private Champion _champion;
     private Animator _animator;
     private SpriteRenderer _renderer;
+    private Rigidbody2D _rb;
     private static readonly int AttackAnim = Animator.StringToHash("Attack");
     private static readonly int AttackAnimDuration = Animator.StringToHash("AttackDuration");
 
@@ -23,9 +24,11 @@ public class ChampionObject : MonoBehaviour
     public float AttackSpeed { get; private set; }
     public float AttackCooldown { get; private set; }
     public ChampionState CurrentState { get; private set; }
-    private ChampionState _previousState;
     public Vector3 StartPosition { get; private set; }
     public bool IsDead { get; private set; }
+
+    private Vector3 _targetDirection;
+    private bool _needsToMove;
     
     public delegate void OnDeath(ChampionObject champion);
     public event OnDeath onDeath;
@@ -34,6 +37,7 @@ public class ChampionObject : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _renderer = GetComponent<SpriteRenderer>();
+        _rb = GetComponent<Rigidbody2D>();
     }
 
     void Start()
@@ -47,21 +51,19 @@ public class ChampionObject : MonoBehaviour
         AttackSpeed = _champion.AttackSpeed;
         AttackCooldown = _champion.AttackCooldown;
         CurrentState = ChampionState.Ready;
-        _previousState = ChampionState.Ready;
         StartPosition = transform.position;
         IsDead = false;
+
+        _needsToMove = false;
     }
 
-    void Update()
+    private void FixedUpdate()
     {
-        if (_previousState == CurrentState) return;
-
-        if (CurrentState == ChampionState.AttackCooldown)
+        if (_needsToMove)
         {
-            
+            print($"{_champion.GetType().Name} is moving!");
+            MoveInTargetDirection();
         }
-
-        _previousState = CurrentState;
     }
 
     public void LoseHealth(int health)
@@ -79,14 +81,15 @@ public class ChampionObject : MonoBehaviour
         }
     }
     
-    protected void MoveInDirection(Vector3 direction)
+    private void MoveInTargetDirection()
     {
-        CheckForFlip(direction);
-        Vector3 newPosition = transform.position + direction * Speed * Time.deltaTime;
-        transform.position = newPosition;
+        CheckForFlip(_targetDirection);
+        var newPosition = transform.position + _targetDirection * Speed * Time.fixedDeltaTime;
+        _rb.MovePosition(newPosition);
+        _needsToMove = false;
     }
 
-    private void CheckForFlip(Vector3 direction)
+    private void CheckForFlip(Vector2 direction)
     {
         bool shouldFlip = direction.x > 0;
         if (_renderer.flipX != shouldFlip) _renderer.flipX = shouldFlip;
@@ -96,7 +99,17 @@ public class ChampionObject : MonoBehaviour
     {
         if (collision.CompareTag("Arena"))
         {
-            print("CollidedWithArena");
+        }
+        if (collision.CompareTag("Player"))
+        {
+            print("CollidedWithChamp");
+        }
+    }
+    
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Arena"))
+        {
         }
         if (collision.CompareTag("Player"))
         {
@@ -152,15 +165,15 @@ public class ChampionObject : MonoBehaviour
     protected void MoveTowardsTarget(ChampionObject target)
     {
         var targetPos = target.transform.position;
-        var directionToMove = (targetPos - transform.position).normalized;
-        MoveInDirection(directionToMove);
+        _targetDirection = (targetPos - transform.position).normalized;
+        _needsToMove = true;
     }
     
     protected void MoveAwayFromTarget(ChampionObject target)
     {
         var targetPos = target.transform.position;
-        var directionToMove = (transform.position - targetPos).normalized;
-        MoveInDirection(directionToMove);
+        _targetDirection = (transform.position - targetPos).normalized;
+        _needsToMove = true;
     }
 
     public void HandleReadyState(KeyValuePair<ChampionObject, float> closestEnemyWithDistance)

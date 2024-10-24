@@ -604,15 +604,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   battleController: {fileID: 1658993420}
   championEntries:
-  - name: 1
+  - name: 0
     health: 100
     speed: 5
     attackRange: 19
     attackDamage: 10
     attackSpeed: 1
     attackCooldown: 0.6
-    active: 1
-  - name: 0
+    active: 0
+  - name: 1
     health: 120
     speed: 8
     attackRange: 4
@@ -627,7 +627,7 @@ MonoBehaviour:
     attackDamage: 13
     attackSpeed: 0.9
     attackCooldown: 0.4
-    active: 1
+    active: 0
   - name: 0
     health: 80
     speed: 3
@@ -635,7 +635,7 @@ MonoBehaviour:
     attackDamage: 5
     attackSpeed: 0.6
     attackCooldown: 0.4
-    active: 1
+    active: 0
   - name: 0
     health: 110
     speed: 6
@@ -651,7 +651,7 @@ MonoBehaviour:
     attackDamage: 17
     attackSpeed: 0.4
     attackCooldown: 0.6
-    active: 1
+    active: 0
 --- !u!4 &1658993419
 Transform:
   m_ObjectHideFlags: 0

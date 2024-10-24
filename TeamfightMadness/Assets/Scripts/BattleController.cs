@@ -10,15 +10,15 @@ public class BattleController : MonoBehaviour
 {
     private readonly Vector3[] _startPositionsTeam1 =
     {
-        new Vector3(-40, -25, 0),
         new Vector3(-30, 0, 0),
+        new Vector3(-40, -25, 0),
         new Vector3(-40, 25, 0),
     };
     
     private readonly Vector3[] _startPositionsTeam2 =
     {
-        new Vector3(40, -25, 0),
         new Vector3(30, 0, 0),
+        new Vector3(40, -25, 0),
         new Vector3(40, 25, 0),
     };
 

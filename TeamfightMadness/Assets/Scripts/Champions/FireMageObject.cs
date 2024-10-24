@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FireMageObject : ChampionObject
 {
-    private const float SpacingThreshold = 0.1f;
+    private const float SpacingThreshold = 0.2f;
 
     public override void HandleAttackCooldown(List<KeyValuePair<ChampionObject,float>> enemiesWithDistance)
     {
@@ -15,7 +15,7 @@ public class FireMageObject : ChampionObject
         }
 
         if (enemiesWithDistance[0].Value >= AttackRange - SpacingThreshold) return;
-        
+
         foreach (var enemy in enemiesWithDistance)
         {
             if (enemy.Key.AttackRange >= enemy.Value)
