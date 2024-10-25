@@ -25,7 +25,6 @@ public class ChampionObject : MonoBehaviour
     public float AttackCooldown { get; private set; }
     public ChampionState CurrentState { get; private set; }
     public Vector3 StartPosition { get; private set; }
-    public bool IsDead { get; private set; }
 
     private Vector3 _targetDirection;
     private bool _needsToMove;
@@ -52,35 +51,36 @@ public class ChampionObject : MonoBehaviour
         AttackCooldown = _champion.AttackCooldown;
         CurrentState = ChampionState.Ready;
         StartPosition = transform.position;
-        IsDead = false;
 
         _needsToMove = false;
     }
 
     private void FixedUpdate()
     {
-        if (_needsToMove)
+        if (_needsToMove && CurrentState != ChampionState.Attacking)
         {
             print($"{_champion.GetType().Name} is moving!");
             MoveInTargetDirection();
         }
     }
 
-    public void LoseHealth(int health)
+    private void LoseHealth(int health)
     {
         Health -= health;
         healthBar.UpdateHealthBar(Health);
 
-        if (Health <= 0)
-        {
-            IsDead = true;
-            CurrentState = ChampionState.Dead;
-            gameObject.SetActive(false);
-            StopAllCoroutines();
-            onDeath?.Invoke(this);
-        }
+        if (Health <= 0) HandleDeath();
     }
-    
+
+    private void HandleDeath()
+    {
+        CurrentState = ChampionState.Dead;
+        _animator.SetBool(AttackAnim, false);
+        gameObject.SetActive(false);
+        StopAllCoroutines();
+        onDeath?.Invoke(this);
+    }
+
     private void MoveInTargetDirection()
     {
         CheckForFlip(_targetDirection);
@@ -149,7 +149,6 @@ public class ChampionObject : MonoBehaviour
 
     public void Respawn()
     {
-        IsDead = false;
         CurrentState = ChampionState.Ready;
         Health = _champion.MaxHealth;
         healthBar.UpdateHealthBar(Health);

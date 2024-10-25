@@ -613,12 +613,12 @@ MonoBehaviour:
     attackCooldown: 0.6
     active: 0
   - name: 1
-    health: 120
-    speed: 8
+    health: 40
+    speed: 5
     attackRange: 4
-    attackDamage: 7
-    attackSpeed: 1.1
-    attackCooldown: 0.8
+    attackDamage: 9
+    attackSpeed: 0.8
+    attackCooldown: 0.7
     active: 1
   - name: 1
     health: 140
@@ -637,12 +637,12 @@ MonoBehaviour:
     attackCooldown: 0.4
     active: 0
   - name: 0
-    health: 110
-    speed: 6
-    attackRange: 8
+    health: 25
+    speed: 4
+    attackRange: 11
     attackDamage: 7
-    attackSpeed: 1
-    attackCooldown: 0.5
+    attackSpeed: 1.1
+    attackCooldown: 0.6
     active: 1
   - name: 1
     health: 210
@@ -681,8 +681,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreUI: {fileID: 1516830558}
   battleTimeUI: {fileID: 1903503935}
-  respawnTime: 5
-  battleTime: 30
+  respawnTime: 3
+  battleTime: 60
   factory: {fileID: 1658993421}
 --- !u!114 &1658993421
 MonoBehaviour:

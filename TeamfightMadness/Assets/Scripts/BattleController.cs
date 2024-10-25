@@ -112,20 +112,32 @@ public class BattleController : MonoBehaviour
 
     private void HandleReadyState(ChampionObject champion)
     {
-        ChampionObject closestEnemy = GetClosestEnemyFromChampion(champion);
-        float distanceToChampion = DistanceBetweenChampions(champion, closestEnemy);
-        KeyValuePair<ChampionObject, float> closestEnemyWithDistance = new KeyValuePair<ChampionObject, float>(closestEnemy, distanceToChampion);
+        List<ChampionObject> allEnemies = new List<ChampionObject>();
+        
+        if (_championsTeam1.Contains(champion))
+        {
+            allEnemies.AddRange(_championsTeam2.Where(champ => champ.CurrentState != ChampionState.Dead));
+        }
+        if (_championsTeam2.Contains(champion))
+        {
+            allEnemies.AddRange(_championsTeam1.Where(champ => champ.CurrentState != ChampionState.Dead));
+        }
+        if (allEnemies.Count == 0) return;
+        
+        ChampionObject closestEnemy = GetClosestChampionFromChampion(champion, allEnemies);
+        float distanceToEnemy = DistanceBetweenChampions(champion, closestEnemy);
+        KeyValuePair<ChampionObject, float> closestEnemyWithDistance = new KeyValuePair<ChampionObject, float>(closestEnemy, distanceToEnemy);
 
         champion.HandleReadyState(closestEnemyWithDistance);
     }
 
     private void HandleAttackCooldownState(ChampionObject champion)
     {
-        List<ChampionObject> enemies = new List<ChampionObject>();
-        if (_championsTeam1.Contains(champion)) enemies.AddRange(_championsTeam2);
-        else enemies.AddRange(_championsTeam1);
+        List<ChampionObject> allEnemies = new List<ChampionObject>();
+        if (_championsTeam1.Contains(champion)) allEnemies.AddRange(_championsTeam2.Where(champ => champ.CurrentState != ChampionState.Dead));
+        else allEnemies.AddRange(_championsTeam1.Where(champ => champ.CurrentState != ChampionState.Dead));
 
-        var enemiesWithDistance = SortByDistanceFromChampion(champion, enemies);
+        var enemiesWithDistance = SortByDistanceFromChampion(champion, allEnemies);
         
         champion.HandleAttackCooldown(enemiesWithDistance);
     }
@@ -144,27 +156,21 @@ public class BattleController : MonoBehaviour
         return sortedList;
     }
 
-    private ChampionObject GetClosestEnemyFromChampion(ChampionObject champion)
+    private ChampionObject GetClosestChampionFromChampion(ChampionObject champion, List<ChampionObject> targets)
     {
-        List<ChampionObject> allEnemies = new List<ChampionObject>();
-
-        if (_championsTeam1.Contains(champion)) allEnemies.AddRange(_championsTeam2);
-        if (_championsTeam2.Contains(champion)) allEnemies.AddRange(_championsTeam1);
-        
-        ChampionObject closestEnemy = null;
+        ChampionObject closestChampion = null;
         float currentlyClosestDistance = float.MaxValue;
         
-        foreach (var champ in allEnemies)
+        foreach (var champ in targets)
         {
-            if (champ.IsDead) continue;
             var distance = DistanceBetweenChampions(champion, champ);
             if (distance < currentlyClosestDistance)
             {
-                closestEnemy = champ;
+                closestChampion = champ;
                 currentlyClosestDistance = distance;
             }
         }
-        return closestEnemy;
+        return closestChampion;
     }
     
     private void HandleChampionDeath(ChampionObject champion)

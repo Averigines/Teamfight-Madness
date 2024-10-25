@@ -194,7 +194,7 @@ Rigidbody2D:
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!1001 &1183838741846201687
 PrefabInstance:
   m_ObjectHideFlags: 0
