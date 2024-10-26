@@ -5,7 +5,8 @@ using UnityEngine;
 public enum ChampionName
 {
     FireMage,
-    Warrior
+    Warrior,
+    TreeStump,
 };
 
 public enum ChampionState

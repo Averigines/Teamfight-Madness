@@ -7,7 +7,6 @@ using Vector2 = System.Numerics.Vector2;
 public class Projectile : MonoBehaviour
 {
     private Vector3 _startPosition;
-    private Vector3 _targetPosition;
     private Vector3 _targetDirection;
     private Team _targetTeam;
     private int _damage;
@@ -20,7 +19,6 @@ public class Projectile : MonoBehaviour
         _targetDirection = targetDirection;
         _targetTeam = opponentTeam;
         _startPosition = transform.position;
-        _targetPosition = _startPosition + _targetDirection * range;
         _damage = damage;
     }
     

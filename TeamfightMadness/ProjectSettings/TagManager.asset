@@ -45,6 +45,9 @@ TagManager:
   - name: Background
     uniqueID: 2312276859
     locked: 0
+  - name: BackgroundEffects
+    uniqueID: 1456844705
+    locked: 0
   - name: Champions
     uniqueID: 1872783295
     locked: 0

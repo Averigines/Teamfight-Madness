@@ -14,7 +14,7 @@ namespace GameModel
         public float AttackSpeed { get; private set; }
         public float AttackCooldown { get; private set; }
 
-        public Champion(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed, float attackCooldown)
+        protected Champion(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed, float attackCooldown)
         {
             MaxHealth = maxHealth;
             Speed = speed;
@@ -37,6 +37,15 @@ namespace GameModel
     public class Warrior : Champion
     {
         public Warrior(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed, float attackCooldown) : base(
+            maxHealth, speed, attackRange, attackDamage, attackSpeed, attackCooldown)
+        {
+            
+        }
+    }
+    
+    public class TreeStump : Champion
+    {
+        public TreeStump(int maxHealth, int speed, int attackRange, int attackDamage, float attackSpeed, float attackCooldown) : base(
             maxHealth, speed, attackRange, attackDamage, attackSpeed, attackCooldown)
         {
             

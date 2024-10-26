@@ -6,12 +6,12 @@ using UnityEngine;
 public class FireMageObject : ChampionObject
 {
     private const float SpacingThreshold = 0.2f;
-    [SerializeField] private GameObject attackProjectile;
+    [SerializeField] private GameObject attackObject;
     private ChampionObject _currentAttackTarget;
 
     public override void HandleAttackCooldown()
     {
-        var validTargets = Controller.GetLivingChampionsOfTeam(OpponentTeam);
+        var validTargets = Controller.GetChampionsOfTeam(OpponentTeam, true);
         if (validTargets.Count == 0) return;
         var target = Controller.GetClosestChampion(this, validTargets);
         var distanceToTarget = Controller.GetDistanceToChampion(this, target);
@@ -30,7 +30,7 @@ public class FireMageObject : ChampionObject
     
     public override void HandleReadyState()
     {
-        var validTargets = Controller.GetLivingChampionsOfTeam(OpponentTeam);
+        var validTargets = Controller.GetChampionsOfTeam(OpponentTeam, true);
         if (validTargets.Count == 0) return;
         var target = Controller.GetClosestChampion(this, validTargets);
         var distanceToTarget = Controller.GetDistanceToChampion(this, target);
@@ -62,14 +62,14 @@ public class FireMageObject : ChampionObject
     public void FinishAttack()
     {
         var directionToEnemy = (_currentAttackTarget.transform.position - transform.position).normalized;
-        SpawnProjectile(transform.position, directionToEnemy);
+        SpawnAttackObject(transform.position, directionToEnemy);
         Animator.SetBool(AttackAnim, false);
         StartCoroutine(AttackCooldownCoroutine());
     }
 
-    private void SpawnProjectile(Vector3 spawnPosition, Vector3 targetDirection)
+    private void SpawnAttackObject(Vector3 spawnPosition, Vector3 targetDirection)
     {
-        GameObject noob = Instantiate(attackProjectile, spawnPosition, Quaternion.identity);
+        GameObject noob = Instantiate(attackObject, spawnPosition, Quaternion.identity);
         var obj = noob.GetComponent<Projectile>();
         obj.Initialize(targetDirection, OpponentTeam, AttackDamage);
     }

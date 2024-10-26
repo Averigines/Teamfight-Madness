@@ -9,7 +9,7 @@ public class WarriorObject : ChampionObject
 
     public override void HandleAttackCooldown()
     {
-        var validTargets = Controller.GetLivingChampionsOfTeam(OpponentTeam);
+        var validTargets = Controller.GetChampionsOfTeam(OpponentTeam, true);
         if (validTargets.Count == 0) return;
         var target = Controller.GetClosestChampion(this, validTargets);
         var distanceToTarget = Controller.GetDistanceToChampion(this, target);
@@ -19,7 +19,7 @@ public class WarriorObject : ChampionObject
 
     public override void HandleReadyState()
     {
-        var validTargets = Controller.GetLivingChampionsOfTeam(OpponentTeam);
+        var validTargets = Controller.GetChampionsOfTeam(OpponentTeam, true);
         if (validTargets.Count == 0) return;
         var target = Controller.GetClosestChampion(this, validTargets);
         var distanceToTarget = Controller.GetDistanceToChampion(this, target);

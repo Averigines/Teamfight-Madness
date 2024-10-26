@@ -22,6 +22,7 @@ public abstract class ChampionObject : MonoBehaviour
     protected static readonly int AttackAnim = Animator.StringToHash("Attack");
     protected static readonly int AttackAnimDuration = Animator.StringToHash("AttackDuration");
 
+    private int _maxHealth;
     private int _health;
     private int _speed;
     public int AttackRange { get; private set; }
@@ -46,8 +47,9 @@ public abstract class ChampionObject : MonoBehaviour
 
     void Start()
     {
-        _health = _champion.MaxHealth;
-        healthBar.Initialize(_champion.MaxHealth, _renderer);
+        _maxHealth = _champion.MaxHealth;
+        _health = _maxHealth;
+        healthBar.Initialize(_maxHealth, _renderer);
         healthBar.UpdateHealthBar(_health);
         _speed = _champion.Speed;
         AttackRange = _champion.AttackRange;
@@ -84,6 +86,13 @@ public abstract class ChampionObject : MonoBehaviour
 
         if (_health <= 0) HandleDeath();
     }
+    
+    public void GainHealth(int health)
+    {
+        _health += health;
+        if (_health > _maxHealth) _health = _maxHealth;
+        healthBar.UpdateHealthBar(_health);
+    }
 
     private void HandleDeath()
     {
@@ -119,7 +128,7 @@ public abstract class ChampionObject : MonoBehaviour
     public void Respawn()
     {
         CurrentState = ChampionState.Ready;
-        _health = _champion.MaxHealth;
+        _health = _maxHealth;
         healthBar.UpdateHealthBar(_health);
         transform.position = _startPosition;
         gameObject.SetActive(true);
@@ -134,13 +143,11 @@ public abstract class ChampionObject : MonoBehaviour
         _targetDirection = (targetPos - transform.position).normalized;
         _needsToMove = true;
     }
-    
+
     protected void MoveAwayFromTarget(ChampionObject target)
     {
         var targetPos = target.transform.position;
         _targetDirection = (transform.position - targetPos).normalized;
         _needsToMove = true;
     }
-
-    
 }

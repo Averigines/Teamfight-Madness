@@ -11,15 +11,15 @@ public class BattleController : MonoBehaviour
     private readonly Vector3[] _startPositionsTeam1 =
     {
         new Vector3(-10, 0, 0),
-        new Vector3(-40, -25, 0),
-        new Vector3(-40, 25, 0),
+        new Vector3(-15, -10, 0),
+        new Vector3(-15, 10, 0),
     };
     
     private readonly Vector3[] _startPositionsTeam2 =
     {
         new Vector3(10, 0, 0),
-        new Vector3(40, -25, 0),
-        new Vector3(40, 25, 0),
+        new Vector3(15, -10, 0),
+        new Vector3(15, 10, 0),
     };
 
     [SerializeField] private ScoreUI scoreUI;
@@ -179,13 +179,25 @@ public class BattleController : MonoBehaviour
         return distance;
     }
 
-    public List<ChampionObject> GetLivingChampionsOfTeam(Team team)
+    public List<ChampionObject> GetChampionsOfTeam(Team team, bool excludeDead)
     {
         List<ChampionObject> champs = new List<ChampionObject>();
-        foreach (var champ in _champions.Where(champ => champ.Team == team && champ.CurrentState != ChampionState.Dead))
+
+        if (excludeDead)
         {
-            champs.Add(champ);
+            foreach (var champ in _champions.Where(champ => champ.Team == team && champ.CurrentState != ChampionState.Dead))
+            {
+                champs.Add(champ);
+            }
         }
+        else
+        {
+            foreach (var champ in _champions.Where(champ => champ.Team == team))
+            {
+                champs.Add(champ);
+            }
+        }
+        
         return champs;
     }
 }
