@@ -6,7 +6,7 @@ using GameModel;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ChampionObject : MonoBehaviour
+public abstract class ChampionObject : MonoBehaviour
 {
     [SerializeField] private HealthBar healthBar;
     
@@ -14,17 +14,22 @@ public class ChampionObject : MonoBehaviour
     private Animator _animator;
     private SpriteRenderer _renderer;
     private Rigidbody2D _rb;
+
+    [NonSerialized] public BattleController controller;
+    [NonSerialized] public Team Team;
+    [NonSerialized] protected Team OpponentTeam;
+    
     private static readonly int AttackAnim = Animator.StringToHash("Attack");
     private static readonly int AttackAnimDuration = Animator.StringToHash("AttackDuration");
 
-    public int Health { get; private set; }
-    public int Speed { get; private set; }
+    private int _health;
+    private int _speed;
     public int AttackRange { get; private set; }
-    public int AttackDamage { get; private set; }
-    public float AttackSpeed { get; private set; }
-    public float AttackCooldown { get; private set; }
+    protected int AttackDamage;
+    private float _attackSpeed;
+    private float _attackCooldown;
     public ChampionState CurrentState { get; private set; }
-    public Vector3 StartPosition { get; private set; }
+    private Vector3 _startPosition;
 
     private Vector3 _targetDirection;
     private bool _needsToMove;
@@ -41,16 +46,17 @@ public class ChampionObject : MonoBehaviour
 
     void Start()
     {
-        Health = _champion.MaxHealth;
+        _health = _champion.MaxHealth;
         healthBar.Initialize(_champion.MaxHealth, _renderer);
-        healthBar.UpdateHealthBar(Health);
-        Speed = _champion.Speed;
+        healthBar.UpdateHealthBar(_health);
+        _speed = _champion.Speed;
         AttackRange = _champion.AttackRange;
         AttackDamage = _champion.AttackDamage;
-        AttackSpeed = _champion.AttackSpeed;
-        AttackCooldown = _champion.AttackCooldown;
+        _attackSpeed = _champion.AttackSpeed;
+        _attackCooldown = _champion.AttackCooldown;
         CurrentState = ChampionState.Ready;
-        StartPosition = transform.position;
+        _startPosition = transform.position;
+        OpponentTeam = Team == Team.Blue ? Team.Red : Team.Blue;
 
         _needsToMove = false;
     }
@@ -64,12 +70,12 @@ public class ChampionObject : MonoBehaviour
         }
     }
 
-    private void LoseHealth(int health)
+    public void LoseHealth(int health)
     {
-        Health -= health;
-        healthBar.UpdateHealthBar(Health);
+        _health -= health;
+        healthBar.UpdateHealthBar(_health);
 
-        if (Health <= 0) HandleDeath();
+        if (_health <= 0) HandleDeath();
     }
 
     private void HandleDeath()
@@ -84,7 +90,7 @@ public class ChampionObject : MonoBehaviour
     private void MoveInTargetDirection()
     {
         CheckForFlip(_targetDirection);
-        var newPosition = transform.position + _targetDirection * Speed * Time.fixedDeltaTime;
+        var newPosition = transform.position + _targetDirection * _speed * Time.fixedDeltaTime;
         _rb.MovePosition(newPosition);
         _needsToMove = false;
     }
@@ -102,7 +108,7 @@ public class ChampionObject : MonoBehaviour
         }
         if (collision.CompareTag("Player"))
         {
-            print("CollidedWithChamp");
+            //print("CollidedWithChamp");
         }
     }
     
@@ -113,7 +119,7 @@ public class ChampionObject : MonoBehaviour
         }
         if (collision.CompareTag("Player"))
         {
-            print("CollidedWithChamp");
+            //print("CollidedWithChamp");
         }
     }
 
@@ -123,8 +129,8 @@ public class ChampionObject : MonoBehaviour
         
         CurrentState = ChampionState.Attacking;
 
-        float duration = 1 / AttackSpeed;
-        _animator.SetFloat(AttackAnimDuration, AttackSpeed);
+        float duration = 1 / _attackSpeed;
+        _animator.SetFloat(AttackAnimDuration, _attackSpeed);
         _animator.SetBool(AttackAnim, true);
 
         yield return new WaitForSeconds(duration);
@@ -138,7 +144,7 @@ public class ChampionObject : MonoBehaviour
     private IEnumerator AttackCooldownCoroutine()
     {
         CurrentState = ChampionState.AttackCooldown;
-        yield return new WaitForSeconds(AttackCooldown);
+        yield return new WaitForSeconds(_attackCooldown);
         CurrentState = ChampionState.Ready;
     }
 
@@ -150,17 +156,15 @@ public class ChampionObject : MonoBehaviour
     public void Respawn()
     {
         CurrentState = ChampionState.Ready;
-        Health = _champion.MaxHealth;
-        healthBar.UpdateHealthBar(Health);
-        transform.position = StartPosition;
+        _health = _champion.MaxHealth;
+        healthBar.UpdateHealthBar(_health);
+        transform.position = _startPosition;
         gameObject.SetActive(true);
     }
 
-    public virtual void HandleAttackCooldown(List<KeyValuePair<ChampionObject,float>> enemiesWithDistance)
-    {
-        
-    }
-    
+    public abstract void HandleReadyState();
+    public abstract void HandleAttackCooldown();
+
     protected void MoveTowardsTarget(ChampionObject target)
     {
         var targetPos = target.transform.position;
@@ -175,20 +179,5 @@ public class ChampionObject : MonoBehaviour
         _needsToMove = true;
     }
 
-    public void HandleReadyState(KeyValuePair<ChampionObject, float> closestEnemyWithDistance)
-    {
-        if (AttackRange >= closestEnemyWithDistance.Value)
-        {
-            var enemyPos = closestEnemyWithDistance.Key.transform.position;
-            var directionToEnemy = (enemyPos - transform.position).normalized;
-            StartCoroutine(AttackCoroutine(directionToEnemy,() =>
-            {
-                closestEnemyWithDistance.Key.LoseHealth(AttackDamage);
-            }));
-        }
-        else
-        {
-            MoveTowardsTarget(closestEnemyWithDistance.Key);
-        }
-    }
+    
 }

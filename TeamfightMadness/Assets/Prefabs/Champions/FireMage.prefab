@@ -123,6 +123,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 7947704974227730032}
+  controller: {fileID: 0}
+  attackProjectile: {fileID: 8563898745985943884, guid: d604ca83f1e2174498179947debda5b7, type: 3}
 --- !u!61 &2062394821774634011
 BoxCollider2D:
   m_ObjectHideFlags: 0

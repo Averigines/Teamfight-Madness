@@ -5,24 +5,52 @@ using UnityEngine;
 public class FireMageObject : ChampionObject
 {
     private const float SpacingThreshold = 0.2f;
+    [SerializeField] private GameObject attackProjectile;
 
-    public override void HandleAttackCooldown(List<KeyValuePair<ChampionObject,float>> enemiesWithDistance)
+    public override void HandleAttackCooldown()
     {
-        if (AttackRange < enemiesWithDistance[0].Value)
+        var validTargets = controller.GetLivingChampionsOfTeam(OpponentTeam);
+        if (validTargets.Count == 0) return;
+        var target = controller.GetClosestChampion(this, validTargets);
+        var distanceToTarget = controller.GetDistanceToChampion(this, target);
+        
+        if (AttackRange < distanceToTarget)
         {
-            MoveTowardsTarget(enemiesWithDistance[0].Key);
+            MoveTowardsTarget(target);
             return;
         }
-
-        if (enemiesWithDistance[0].Value >= AttackRange - SpacingThreshold) return;
-
-        foreach (var enemy in enemiesWithDistance)
+        
+        if (distanceToTarget >= AttackRange - SpacingThreshold) return;
+        
+        if (target.AttackRange >= distanceToTarget) MoveAwayFromTarget(target);
+    }
+    
+    public override void HandleReadyState()
+    {
+        var validTargets = controller.GetLivingChampionsOfTeam(OpponentTeam);
+        if (validTargets.Count == 0) return;
+        var target = controller.GetClosestChampion(this, validTargets);
+        var distanceToTarget = controller.GetDistanceToChampion(this, target);
+        
+        if (AttackRange >= distanceToTarget)
         {
-            if (enemy.Key.AttackRange >= enemy.Value)
+            var enemyPos = target.transform.position;
+            var directionToEnemy = (enemyPos - transform.position).normalized;
+            StartCoroutine(AttackCoroutine(directionToEnemy,() =>
             {
-                MoveAwayFromTarget(enemy.Key);
-                return;
-            }
+                SpawnProjectile(transform.position, directionToEnemy);
+            }));
         }
+        else
+        {
+            MoveTowardsTarget(target);
+        }
+    }
+
+    private void SpawnProjectile(Vector3 spawnPosition, Vector3 targetDirection)
+    {
+        GameObject noob = Instantiate(attackProjectile, spawnPosition, Quaternion.identity);
+        var obj = noob.GetComponent<Projectile>();
+        obj.Initialize(targetDirection, OpponentTeam, AttackDamage);
     }
 }

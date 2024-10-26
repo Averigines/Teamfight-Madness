@@ -16,3 +16,9 @@ public enum ChampionState
     Ready,
 };
 
+public enum Team
+{
+    Blue,
+    Red,
+};
+

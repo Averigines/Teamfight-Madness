@@ -38,8 +38,6 @@ public class ChampionFactory : MonoBehaviour
         }
 
         ChampionObject obj = go.GetComponent<ChampionObject>();
-        obj.AssignChampionModel(entry);
-
         return obj;
     }
 }

@@ -48,16 +48,22 @@ public class BattleController : MonoBehaviour
         for (int i = 0; i < championsTeam1.Length; i++)
         {
             var noob = factory.CreateChampionInBattle(championsTeam1[i], _startPositionsTeam1[i]);
+            noob.AssignChampionModel(championsTeam1[i]);
             _champions.Add(noob);
             _championsTeam1.Add(noob);
+            noob.controller = this;
+            noob.Team = Team.Blue;
         }
         
         //Initiate Team 2
         for (int i = 0; i < championsTeam2.Length; i++)
         {
             var noob = factory.CreateChampionInBattle(championsTeam2[i], _startPositionsTeam2[i]);
+            noob.AssignChampionModel(championsTeam2[i]);
             _champions.Add(noob);
             _championsTeam2.Add(noob);
+            noob.controller = this;
+            noob.Team = Team.Red;
         }
 
         foreach (var champion in _champions)
@@ -112,34 +118,12 @@ public class BattleController : MonoBehaviour
 
     private void HandleReadyState(ChampionObject champion)
     {
-        List<ChampionObject> allEnemies = new List<ChampionObject>();
-        
-        if (_championsTeam1.Contains(champion))
-        {
-            allEnemies.AddRange(_championsTeam2.Where(champ => champ.CurrentState != ChampionState.Dead));
-        }
-        if (_championsTeam2.Contains(champion))
-        {
-            allEnemies.AddRange(_championsTeam1.Where(champ => champ.CurrentState != ChampionState.Dead));
-        }
-        if (allEnemies.Count == 0) return;
-        
-        ChampionObject closestEnemy = GetClosestChampionFromChampion(champion, allEnemies);
-        float distanceToEnemy = DistanceBetweenChampions(champion, closestEnemy);
-        KeyValuePair<ChampionObject, float> closestEnemyWithDistance = new KeyValuePair<ChampionObject, float>(closestEnemy, distanceToEnemy);
-
-        champion.HandleReadyState(closestEnemyWithDistance);
+        champion.HandleReadyState();
     }
 
     private void HandleAttackCooldownState(ChampionObject champion)
     {
-        List<ChampionObject> allEnemies = new List<ChampionObject>();
-        if (_championsTeam1.Contains(champion)) allEnemies.AddRange(_championsTeam2.Where(champ => champ.CurrentState != ChampionState.Dead));
-        else allEnemies.AddRange(_championsTeam1.Where(champ => champ.CurrentState != ChampionState.Dead));
-
-        var enemiesWithDistance = SortByDistanceFromChampion(champion, allEnemies);
-        
-        champion.HandleAttackCooldown(enemiesWithDistance);
+        champion.HandleAttackCooldown();
     }
 
     private List<KeyValuePair<ChampionObject,float>> SortByDistanceFromChampion(ChampionObject champion, List<ChampionObject> targets)
@@ -148,7 +132,7 @@ public class BattleController : MonoBehaviour
 
         foreach (var target in targets)
         {
-            float distance = DistanceBetweenChampions(champion, target);
+            float distance = GetDistanceToChampion(champion, target);
             targetsWithDistance.Add(new KeyValuePair<ChampionObject, float>(target, distance));
         }
 
@@ -156,17 +140,17 @@ public class BattleController : MonoBehaviour
         return sortedList;
     }
 
-    private ChampionObject GetClosestChampionFromChampion(ChampionObject champion, List<ChampionObject> targets)
+    public ChampionObject GetClosestChampion(ChampionObject source, List<ChampionObject> targets)
     {
         ChampionObject closestChampion = null;
         float currentlyClosestDistance = float.MaxValue;
         
-        foreach (var champ in targets)
+        foreach (var target in targets)
         {
-            var distance = DistanceBetweenChampions(champion, champ);
+            var distance = GetDistanceToChampion(source, target);
             if (distance < currentlyClosestDistance)
             {
-                closestChampion = champ;
+                closestChampion = target;
                 currentlyClosestDistance = distance;
             }
         }
@@ -198,9 +182,19 @@ public class BattleController : MonoBehaviour
         onBattleEnd?.Invoke();
     }
 
-    private static float DistanceBetweenChampions(ChampionObject champion1, ChampionObject champion2)
+    public float GetDistanceToChampion(ChampionObject source, ChampionObject target)
     {
-        float distance = Vector2.Distance(champion1.transform.position, champion2.transform.position);
+        float distance = Vector2.Distance(source.transform.position, target.transform.position);
         return distance;
+    }
+
+    public List<ChampionObject> GetLivingChampionsOfTeam(Team team)
+    {
+        List<ChampionObject> champs = new List<ChampionObject>();
+        foreach (var champ in _champions.Where(champ => champ.Team == team && champ.CurrentState != ChampionState.Dead))
+        {
+            champs.Add(champ);
+        }
+        return champs;
     }
 }
