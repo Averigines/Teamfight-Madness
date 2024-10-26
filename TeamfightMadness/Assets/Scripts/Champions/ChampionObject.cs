@@ -42,7 +42,7 @@ public class ChampionObject : MonoBehaviour
     void Start()
     {
         Health = _champion.MaxHealth;
-        healthBar.Initialize(_champion.MaxHealth);
+        healthBar.Initialize(_champion.MaxHealth, _renderer);
         healthBar.UpdateHealthBar(Health);
         Speed = _champion.Speed;
         AttackRange = _champion.AttackRange;
