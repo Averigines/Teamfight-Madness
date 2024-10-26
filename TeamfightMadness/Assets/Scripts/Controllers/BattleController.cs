@@ -150,7 +150,8 @@ public class BattleController : MonoBehaviour
     
     private void HandleChampionDeath(ChampionObject champion)
     {
-        IncreaseScore(champion.Team);
+        var killingTeam = champion.Team == Team.Blue ? Team.Red : Team.Blue;
+        IncreaseScore(killingTeam);
         scoreUI.ChangeScore(_scoreTeam1, _scoreTeam2);
         StartCoroutine(StartRespawnTime(champion));
     }
