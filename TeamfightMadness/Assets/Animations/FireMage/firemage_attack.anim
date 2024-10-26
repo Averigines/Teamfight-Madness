@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack
+  m_Name: firemage_attack
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,13 +21,13 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 459188305, guid: 9d77b3b2376fab84282aba7940743b7d, type: 3}
+      value: {fileID: -1011374684, guid: 646ff42ddb157f943956612713ae6528, type: 3}
     - time: 0.33333334
-      value: {fileID: -619760596, guid: 9d77b3b2376fab84282aba7940743b7d, type: 3}
+      value: {fileID: 2140163651, guid: 646ff42ddb157f943956612713ae6528, type: 3}
     - time: 0.6666667
-      value: {fileID: 1941255894, guid: 9d77b3b2376fab84282aba7940743b7d, type: 3}
+      value: {fileID: 1219510434, guid: 646ff42ddb157f943956612713ae6528, type: 3}
     - time: 0.98333335
-      value: {fileID: 1941255894, guid: 9d77b3b2376fab84282aba7940743b7d, type: 3}
+      value: {fileID: 1219510434, guid: 646ff42ddb157f943956612713ae6528, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -50,10 +50,10 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 459188305, guid: 9d77b3b2376fab84282aba7940743b7d, type: 3}
-    - {fileID: -619760596, guid: 9d77b3b2376fab84282aba7940743b7d, type: 3}
-    - {fileID: 1941255894, guid: 9d77b3b2376fab84282aba7940743b7d, type: 3}
-    - {fileID: 1941255894, guid: 9d77b3b2376fab84282aba7940743b7d, type: 3}
+    - {fileID: -1011374684, guid: 646ff42ddb157f943956612713ae6528, type: 3}
+    - {fileID: 2140163651, guid: 646ff42ddb157f943956612713ae6528, type: 3}
+    - {fileID: 1219510434, guid: 646ff42ddb157f943956612713ae6528, type: 3}
+    - {fileID: 1219510434, guid: 646ff42ddb157f943956612713ae6528, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
@@ -78,4 +78,11 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 1
+    functionName: FinishAttack
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

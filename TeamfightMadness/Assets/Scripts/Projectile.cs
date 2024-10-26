@@ -42,16 +42,17 @@ public class Projectile : MonoBehaviour
             {
                 if (champ.Team == _targetTeam)
                 {
-                    print("CollidedWithEnemy");
                     champ.LoseHealth(_damage);
                     Destroy(gameObject);
                 }
             }
         }
+    }
 
-        if (collision.CompareTag("Arena"))
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Arena"))
         {
-            print("CollidedWithWall");
             Destroy(gameObject);
         }
     }

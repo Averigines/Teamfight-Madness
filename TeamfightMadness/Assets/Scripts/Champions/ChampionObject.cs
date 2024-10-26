@@ -11,24 +11,24 @@ public abstract class ChampionObject : MonoBehaviour
     [SerializeField] private HealthBar healthBar;
     
     private Champion _champion;
-    private Animator _animator;
+    protected Animator Animator;
     private SpriteRenderer _renderer;
     private Rigidbody2D _rb;
-
-    [NonSerialized] public BattleController controller;
-    [NonSerialized] public Team Team;
+    private PolygonCollider2D _arenaArea;
+    protected BattleController Controller;
+    public Team Team { private set; get; }
     [NonSerialized] protected Team OpponentTeam;
     
-    private static readonly int AttackAnim = Animator.StringToHash("Attack");
-    private static readonly int AttackAnimDuration = Animator.StringToHash("AttackDuration");
+    protected static readonly int AttackAnim = Animator.StringToHash("Attack");
+    protected static readonly int AttackAnimDuration = Animator.StringToHash("AttackDuration");
 
     private int _health;
     private int _speed;
     public int AttackRange { get; private set; }
     protected int AttackDamage;
-    private float _attackSpeed;
+    protected float AttackSpeed;
     private float _attackCooldown;
-    public ChampionState CurrentState { get; private set; }
+    [NonSerialized] public ChampionState CurrentState;
     private Vector3 _startPosition;
 
     private Vector3 _targetDirection;
@@ -39,7 +39,7 @@ public abstract class ChampionObject : MonoBehaviour
 
     private void Awake()
     {
-        _animator = GetComponent<Animator>();
+        Animator = GetComponent<Animator>();
         _renderer = GetComponent<SpriteRenderer>();
         _rb = GetComponent<Rigidbody2D>();
     }
@@ -52,7 +52,7 @@ public abstract class ChampionObject : MonoBehaviour
         _speed = _champion.Speed;
         AttackRange = _champion.AttackRange;
         AttackDamage = _champion.AttackDamage;
-        _attackSpeed = _champion.AttackSpeed;
+        AttackSpeed = _champion.AttackSpeed;
         _attackCooldown = _champion.AttackCooldown;
         CurrentState = ChampionState.Ready;
         _startPosition = transform.position;
@@ -61,11 +61,18 @@ public abstract class ChampionObject : MonoBehaviour
         _needsToMove = false;
     }
 
+    public void Initialize(BattleController controller, Team team, Champion champion, GameObject arena)
+    {
+        Controller = controller;
+        Team = team;
+        _champion = champion;
+        _arenaArea = arena.GetComponent<PolygonCollider2D>();
+    }
+
     private void FixedUpdate()
     {
         if (_needsToMove && CurrentState != ChampionState.Attacking)
         {
-            print($"{_champion.GetType().Name} is moving!");
             MoveInTargetDirection();
         }
     }
@@ -81,7 +88,7 @@ public abstract class ChampionObject : MonoBehaviour
     private void HandleDeath()
     {
         CurrentState = ChampionState.Dead;
-        _animator.SetBool(AttackAnim, false);
+        Animator.SetBool(AttackAnim, false);
         gameObject.SetActive(false);
         StopAllCoroutines();
         onDeath?.Invoke(this);
@@ -91,66 +98,22 @@ public abstract class ChampionObject : MonoBehaviour
     {
         CheckForFlip(_targetDirection);
         var newPosition = transform.position + _targetDirection * _speed * Time.fixedDeltaTime;
-        _rb.MovePosition(newPosition);
+        
+        if (_arenaArea.OverlapPoint(newPosition)) _rb.MovePosition(newPosition);
         _needsToMove = false;
     }
 
-    private void CheckForFlip(Vector2 direction)
+    protected void CheckForFlip(Vector2 direction)
     {
         bool shouldFlip = direction.x > 0;
         if (_renderer.flipX != shouldFlip) _renderer.flipX = shouldFlip;
     }
-    
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Arena"))
-        {
-        }
-        if (collision.CompareTag("Player"))
-        {
-            //print("CollidedWithChamp");
-        }
-    }
-    
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Arena"))
-        {
-        }
-        if (collision.CompareTag("Player"))
-        {
-            //print("CollidedWithChamp");
-        }
-    }
 
-    public IEnumerator AttackCoroutine(Vector3 direction, Action onAttackComplete)
-    {
-        CheckForFlip(direction);
-        
-        CurrentState = ChampionState.Attacking;
-
-        float duration = 1 / _attackSpeed;
-        _animator.SetFloat(AttackAnimDuration, _attackSpeed);
-        _animator.SetBool(AttackAnim, true);
-
-        yield return new WaitForSeconds(duration);
-
-        onAttackComplete?.Invoke();
-        _animator.SetBool(AttackAnim, false);
-        
-        StartCoroutine(AttackCooldownCoroutine());
-    }
-
-    private IEnumerator AttackCooldownCoroutine()
+    protected IEnumerator AttackCooldownCoroutine()
     {
         CurrentState = ChampionState.AttackCooldown;
         yield return new WaitForSeconds(_attackCooldown);
         CurrentState = ChampionState.Ready;
-    }
-
-    public void AssignChampionModel(Champion championModel)
-    {
-        _champion = championModel;
     }
 
     public void Respawn()

@@ -24,12 +24,11 @@ public class BattleController : MonoBehaviour
 
     [SerializeField] private ScoreUI scoreUI;
     [SerializeField] private BattleTimeUI battleTimeUI;
+    [SerializeField] private GameObject arena;
     
     [SerializeField] private int respawnTime;
     [SerializeField] private int battleTime;
     private List<ChampionObject> _champions;
-    private List<ChampionObject> _championsTeam1;
-    private List<ChampionObject> _championsTeam2;
     private int _scoreTeam1;
     private int _scoreTeam2;
 
@@ -41,29 +40,21 @@ public class BattleController : MonoBehaviour
     public void InitiateBattle(Champion[] championsTeam1, Champion[] championsTeam2)
     {
         _champions = new List<ChampionObject>();
-        _championsTeam1 = new List<ChampionObject>();
-        _championsTeam2 = new List<ChampionObject>();
-        
+
         //Initiate Team 1
         for (int i = 0; i < championsTeam1.Length; i++)
         {
             var noob = factory.CreateChampionInBattle(championsTeam1[i], _startPositionsTeam1[i]);
-            noob.AssignChampionModel(championsTeam1[i]);
+            noob.Initialize(this, Team.Blue, championsTeam1[i], arena);
             _champions.Add(noob);
-            _championsTeam1.Add(noob);
-            noob.controller = this;
-            noob.Team = Team.Blue;
         }
         
         //Initiate Team 2
         for (int i = 0; i < championsTeam2.Length; i++)
         {
             var noob = factory.CreateChampionInBattle(championsTeam2[i], _startPositionsTeam2[i]);
-            noob.AssignChampionModel(championsTeam2[i]);
+            noob.Initialize(this, Team.Red, championsTeam2[i], arena);
             _champions.Add(noob);
-            _championsTeam2.Add(noob);
-            noob.controller = this;
-            noob.Team = Team.Red;
         }
 
         foreach (var champion in _champions)
@@ -159,15 +150,15 @@ public class BattleController : MonoBehaviour
     
     private void HandleChampionDeath(ChampionObject champion)
     {
-        IncreaseScore(champion);
+        IncreaseScore(champion.Team);
         scoreUI.ChangeScore(_scoreTeam1, _scoreTeam2);
         StartCoroutine(StartRespawnTime(champion));
     }
 
-    private void IncreaseScore(ChampionObject champion)
+    private void IncreaseScore(Team team)
     {
-        if (_championsTeam1.Contains(champion)) _scoreTeam1++;
-        if (_championsTeam2.Contains(champion)) _scoreTeam2++;
+        if (team == Team.Blue) _scoreTeam1++;
+        if (team == Team.Red) _scoreTeam2++;
     }
 
     private IEnumerator StartRespawnTime(ChampionObject champion)
